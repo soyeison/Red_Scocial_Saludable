@@ -11,7 +11,7 @@ import Icon from "@expo/vector-icons/Ionicons";
 
 const windowWidth = Dimensions.get("window").width;
 
-export const CardHome = ({ nombre, apellido, descripcion }) => {
+export const CardHome = ({ nombre, apellido, descripcion, uri }) => {
   return (
     <View
       style={{
@@ -56,7 +56,7 @@ export const CardHome = ({ nombre, apellido, descripcion }) => {
       >
         <Image
           source={{
-            uri: "https://blog.contraelcancer.es/wp-content/uploads/2020/03/iStock-1017706758-mod.jpg",
+            uri: uri,
           }}
           style={{ flex: 1, marginHorizontal: 10 }}
         />

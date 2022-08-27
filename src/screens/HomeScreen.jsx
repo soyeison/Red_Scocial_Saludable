@@ -18,6 +18,7 @@ export const HomeScreen = ({ route }) => {
     const docuRef = doc(firestore, `usuarios/${route.params.uid}`);
     const encripted = await getDoc(docuRef);
     const infoFinal = encripted.data();
+    console.log(infoFinal);
     setState({
       nombre: infoFinal.nombre,
       apellido: infoFinal.apellido,
@@ -62,10 +63,11 @@ export const HomeScreen = ({ route }) => {
             <CardHome
               nombre={state.nombre}
               apellido={state.apellido}
-              descripcion={item}
+              descripcion={item.text}
+              uri={item.uri}
             />
           )}
-          keyExtractor={(index) => route.params.uid + index}
+          keyExtractor={(item, index) => route.params.uid + index.toString()}
           ItemSeparatorComponent={() => <View style={{ height: 30 }} />}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={
