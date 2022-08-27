@@ -15,10 +15,12 @@ import { firebaseConfig } from "../firebase/firebase-config";
 import { getFirestore, doc, updateDoc, arrayUnion } from "@firebase/firestore";
 import * as ImagePicker from "expo-image-picker";
 import Icon from "@expo/vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
 
 const { height, width } = Dimensions.get("window");
 
 export const AddPostScreen = ({ route }) => {
+  const navigation = useNavigation();
   const [image, setImage] = useState(""); //Aquí se va a guardar la imagen que se cargue
   const [descripcion, setDescripcion] = useState("");
   //Firebase config
@@ -26,6 +28,10 @@ export const AddPostScreen = ({ route }) => {
   const firestore = getFirestore(app);
 
   const sendPost = async () => {
+    if (descripcion === "") {
+      Alert.alert("Debe agregar una descripción");
+      return;
+    }
     const docuRef = doc(firestore, `usuarios/${route.params.uid}`);
     updateDoc(docuRef, {
       publicaciones: arrayUnion({
@@ -33,6 +39,7 @@ export const AddPostScreen = ({ route }) => {
         uri: image,
       }),
     });
+    navigation.navigate("HomeScreen");
   };
 
   const pickImage = async () => {

@@ -35,6 +35,7 @@ export function Tabs({ route }) {
           tabBarIcon: ({ color }) => (
             <Icon name="home-outline" size={25} color={color} />
           ),
+          unmountOnBlur: true,
         }}
       />
       <Tab.Screen
@@ -46,6 +47,7 @@ export function Tabs({ route }) {
           tabBarIcon: ({ color }) => (
             <Icon name="add-outline" size={25} color={color} />
           ),
+          unmountOnBlur: true,
         }}
       />
       <Tab.Screen
