@@ -5,6 +5,7 @@ import { initializeApp } from "@firebase/app";
 import { firebaseConfig } from "../firebase/firebase-config";
 import { getFirestore, doc, getDoc } from "@firebase/firestore";
 import { CardHome } from "../components/CardHome";
+import Icon from "@expo/vector-icons/Ionicons";
 
 export const HomeScreen = ({ route }) => {
   /* console.log(route.params.uid); */ //Este es el id del usuario que se logeo
@@ -39,32 +40,49 @@ export const HomeScreen = ({ route }) => {
       {/* Agregar modal para oder ingresar una nueva publicacion */}
 
       {/* Faltlist de los posts */}
-      <FlatList
-        data={state.publicaciones}
-        renderItem={({ item }) => (
-          <CardHome
-            nombre={state.nombre}
-            apellido={state.apellido}
-            descripcion={item}
-          />
-        )}
-        keyExtractor={(index) => route.params.uid + index}
-        ItemSeparatorComponent={() => <View style={{ height: 30 }} />}
-        showsVerticalScrollIndicator={false}
-        ListHeaderComponent={
+      {state.publicaciones === undefined ? (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <Text
-            style={{
-              ...styles.listHeader,
-              marginHorizontal: 20,
-              top: top + 20,
-              marginBottom: top + 20,
-              paddingBottom: 10,
-            }}
+            style={{ fontSize: 25, fontWeight: "bold", textAlign: "center" }}
           >
-            Inicio
+            No hay publicaciones para mostrar
           </Text>
-        }
-      />
+          <Icon name="barbell-outline" size={45} color={"#38b000"} />
+        </View>
+      ) : (
+        <FlatList
+          data={state.publicaciones.reverse()}
+          renderItem={({ item }) => (
+            <CardHome
+              nombre={state.nombre}
+              apellido={state.apellido}
+              descripcion={item}
+            />
+          )}
+          keyExtractor={(index) => route.params.uid + index}
+          ItemSeparatorComponent={() => <View style={{ height: 30 }} />}
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={
+            <Text
+              style={{
+                ...styles.listHeader,
+                marginHorizontal: 20,
+                top: top + 20,
+                marginBottom: top + 20,
+                paddingBottom: 10,
+              }}
+            >
+              Inicio
+            </Text>
+          }
+        />
+      )}
     </View>
   );
 };
@@ -75,3 +93,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+{
+  /*  */
+}

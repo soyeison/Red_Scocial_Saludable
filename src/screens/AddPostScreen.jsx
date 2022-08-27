@@ -7,11 +7,26 @@ import {
   StyleSheet,
   Dimensions,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
+import { initializeApp } from "@firebase/app";
+import { firebaseConfig } from "../firebase/firebase-config";
+import { getFirestore, doc, updateDoc, arrayUnion } from "@firebase/firestore";
 
 const { height, width } = Dimensions.get("window");
 
-export const AddPostScreen = () => {
+export const AddPostScreen = ({ route }) => {
+  const [descripcion, setDescripcion] = useState("");
+  //Firebase config
+  const app = initializeApp(firebaseConfig);
+  const firestore = getFirestore(app);
+
+  const sendPost = async () => {
+    const docuRef = doc(firestore, `usuarios/${route.params.uid}`);
+    updateDoc(docuRef, {
+      publicaciones: arrayUnion(descripcion),
+    });
+  };
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -28,6 +43,7 @@ export const AddPostScreen = () => {
         {/* Input */}
         <Text style={styles.subTitle}>Descripción</Text>
         <TextInput
+          onChangeText={(value) => setDescripcion(value)}
           style={styles.textInputStyle}
           multiline
           numberOfLines={12}
@@ -38,7 +54,11 @@ export const AddPostScreen = () => {
 
         <View style={{ height: 30 }} />
         {/* Botones */}
-        <TouchableOpacity activeOpacity={0.8} style={styles.buttons}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.buttons}
+          onPress={sendPost}
+        >
           <Text
             style={{
               color: "white",
