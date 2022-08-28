@@ -9,10 +9,16 @@ import {
   Image,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { initializeApp } from "@firebase/app";
 import { firebaseConfig } from "../firebase/firebase-config";
-import { getFirestore, doc, updateDoc, arrayUnion } from "@firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  addDoc,
+  collection,
+} from "@firebase/firestore";
 import * as ImagePicker from "expo-image-picker";
 import Icon from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
@@ -20,6 +26,8 @@ import { useNavigation } from "@react-navigation/native";
 const { height, width } = Dimensions.get("window");
 
 export const AddPostScreen = ({ route }) => {
+  /* console.log(route.params.uid); */ //Tengo el id del usuario que va a hacer la publicación
+  const [infoUserState, setInfoUserState] = useState({}); //Aqui esta guardado el nombre y apellido de usuario
   const navigation = useNavigation();
   const [image, setImage] = useState(""); //Aquí se va a guardar la imagen que se cargue
   const [descripcion, setDescripcion] = useState("");
@@ -27,18 +35,36 @@ export const AddPostScreen = ({ route }) => {
   const app = initializeApp(firebaseConfig);
   const firestore = getFirestore(app);
 
+  useEffect(() => {
+    infoUser();
+  }, []);
+
+  const infoUser = async () => {
+    const docRef = doc(firestore, "usuarios", `${route.params.uid}`);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      /* console.log("Documento data:", docSnap.data()); */
+      setInfoUserState(docSnap.data());
+    } else {
+      console.log("No such document");
+    }
+  };
+
   const sendPost = async () => {
+    //Función que me permite agregar una publicación
     if (descripcion === "") {
       Alert.alert("Debe agregar una descripción");
       return;
     }
-    const docuRef = doc(firestore, `usuarios/${route.params.uid}`);
-    updateDoc(docuRef, {
-      publicaciones: arrayUnion({
-        text: descripcion,
-        uri: image,
-      }),
+
+    const docRef = await addDoc(collection(firestore, "publicaciones"), {
+      apellido: infoUserState.apellido,
+      nombre: infoUserState.nombre,
+      text: descripcion,
+      uri: image,
+      usuario: route.params,
     });
+    // console.log(docRef.id) Este es el id de la publicacion que acabo de hacer
     navigation.navigate("HomeScreen");
   };
 
@@ -61,7 +87,7 @@ export const AddPostScreen = ({ route }) => {
 
     if (!result.cancelled) {
       setImage(result.uri); //Aqui esta la uri de la foto
-      console.log(result.uri);
+      /* console.log(result.uri); */
     }
   };
 

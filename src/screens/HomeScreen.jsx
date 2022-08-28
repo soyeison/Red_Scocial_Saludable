@@ -9,7 +9,13 @@ import React, { useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { initializeApp } from "@firebase/app";
 import { firebaseConfig } from "../firebase/firebase-config";
-import { getFirestore, doc, getDoc } from "@firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  getDocs,
+  collection,
+} from "@firebase/firestore";
 import { CardHome } from "../components/CardHome";
 import Icon from "@expo/vector-icons/Ionicons";
 
@@ -21,16 +27,13 @@ export const HomeScreen = ({ route }) => {
   const firestore = getFirestore(app);
 
   const getInfo = async () => {
-    //Esta funcion va a ser la que me va a leer la informacion de una referencia de la DB de firebase
-    const docuRef = doc(firestore, `usuarios/${route.params.uid}`);
-    const encripted = await getDoc(docuRef);
-    const infoFinal = encripted.data();
-    console.log(infoFinal);
-    setState({
-      nombre: infoFinal.nombre,
-      apellido: infoFinal.apellido,
-      publicaciones: infoFinal.publicaciones,
+    //Esta funcion va a ser la que me va a leer la informacion de las publicaciones de la DB
+    let data = [];
+    const querySnapshot = await getDocs(collection(firestore, "publicaciones"));
+    querySnapshot.forEach((doc) => {
+      data.push({ idP: doc.id, ...doc.data() });
     });
+    setState(data);
     setIsLoading(false);
   };
 
@@ -49,7 +52,7 @@ export const HomeScreen = ({ route }) => {
       {/* Agregar modal para oder ingresar una nueva publicacion */}
 
       {/* Faltlist de los posts */}
-      {state.publicaciones === undefined ? (
+      {state.length === 0 ? (
         <View
           style={{
             flex: 1,
@@ -85,11 +88,11 @@ export const HomeScreen = ({ route }) => {
             <ActivityIndicator />
           ) : (
             <FlatList
-              data={state.publicaciones.reverse()}
+              data={state.reverse()}
               renderItem={({ item }) => (
                 <CardHome
-                  nombre={state.nombre}
-                  apellido={state.apellido}
+                  nombre={item.nombre}
+                  apellido={item.apellido}
                   descripcion={item.text}
                   uri={item.uri}
                 />
