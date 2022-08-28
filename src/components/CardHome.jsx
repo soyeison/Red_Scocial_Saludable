@@ -5,13 +5,19 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
+  Modal,
+  TextInput,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import Icon from "@expo/vector-icons/Ionicons";
 
 const windowWidth = Dimensions.get("window").width;
 
 export const CardHome = ({ nombre, apellido, descripcion, uri }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const getComments = () => {
+    //Esta función me va a traer los comentarios de cada publicación
+  };
   return (
     <View
       style={{
@@ -63,6 +69,9 @@ export const CardHome = ({ nombre, apellido, descripcion, uri }) => {
       </View>
       <View style={{ alignItems: "center" }}>
         <TouchableOpacity
+          onPress={() => {
+            setIsVisible(true);
+          }}
           activeOpacity={0.7}
           style={{
             ...styles.buttons,
@@ -73,6 +82,96 @@ export const CardHome = ({ nombre, apellido, descripcion, uri }) => {
           <Icon name="chatbox-outline" size={25} />
           <Text style={{ paddingLeft: 5 }}>Comentarios</Text>
         </TouchableOpacity>
+
+        {/* Aqui esta el modal con los comentarios */}
+        <Modal animationType="fade" visible={isVisible} transparent={true}>
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: "rgba(0,0,0,0.3)",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <View
+              style={{
+                width: 350,
+                height: 600,
+                backgroundColor: "white",
+                shadowOffset: {
+                  width: 0,
+                  height: 10,
+                },
+                shadowOpacity: 0.25,
+                elevation: 10,
+                borderRadius: 5,
+              }}
+            >
+              {/* Titulo */}
+              <View
+                style={{
+                  height: 100,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontSize: 32, fontWeight: "bold" }}>
+                  Comentarios
+                </Text>
+              </View>
+              {/* Cuerpo */}
+              <View
+                style={{
+                  height: 320,
+                  /* backgroundColor: "red", */
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontSize: 20, fontWeight: "300" }}>
+                  Aqui van a ir los comentarios
+                </Text>
+              </View>
+
+              {/* Agregar un comentario */}
+              <View
+                style={{
+                  marginHorizontal: 15,
+                }}
+              >
+                <TextInput
+                  onChangeText={(value) => setDescripcion(value)}
+                  style={styles.textInputStyle}
+                  multiline
+                  numberOfLines={4}
+                  placeholder="Comentame..."
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                />
+                <TouchableOpacity
+                  onPress={() => setIsVisible(false)}
+                  activeOpacity={0.8}
+                  style={{
+                    height: 50,
+                    borderRadius: 20,
+                    backgroundColor: "#38b000",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "white",
+                      textAlign: "center",
+                      fontSize: 22,
+                    }}
+                  >
+                    Cerrar
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     </View>
   );
@@ -87,5 +186,12 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 10,
     justifyContent: "center",
+  },
+  textInputStyle: {
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.3)",
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    marginVertical: 10,
   },
 });
