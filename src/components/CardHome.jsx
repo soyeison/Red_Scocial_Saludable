@@ -8,15 +8,58 @@ import {
   Modal,
   TextInput,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Icon from "@expo/vector-icons/Ionicons";
+import { ModalComments } from "./ModalComments";
+//Firebase
+import { initializeApp } from "@firebase/app";
+import { firebaseConfig } from "../firebase/firebase-config";
+import {
+  getFirestore,
+  query,
+  collection,
+  where,
+  getDocs,
+  addDoc,
+  getDoc,
+  doc,
+} from "@firebase/firestore";
 
 const windowWidth = Dimensions.get("window").width;
 
-export const CardHome = ({ nombre, apellido, descripcion, uri }) => {
+export const CardHome = ({
+  nombre,
+  apellido,
+  descripcion,
+  uri,
+  idUsuario,
+  idPublicacion,
+  actualUser,
+}) => {
   const [isVisible, setIsVisible] = useState(false);
-  const getComments = () => {
-    //Esta función me va a traer los comentarios de cada publicación
+  const [nroComments, setNroComments] = useState(0);
+  const [comentarios, setComentarios] = useState([]);
+  //Firebase
+  const app = initializeApp(firebaseConfig);
+  const firestore = getFirestore(app);
+
+  useEffect(() => {
+    getComments();
+  }, []);
+
+  const getComments = async () => {
+    //Esta funcion me va a traer los comentarios de esta publicacion
+    const q = query(
+      collection(firestore, "comentarios"),
+      where("idPublicacion", "==", idPublicacion) //Con esta consulta estoy buscando en la coleccion comentarios los idPublicacion que coincidan con el id de esta publicacion
+    );
+    //Además esta misma consulta se esta haciendo para cada elemento del flatlist
+    let data = [];
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      data.push({ idP: doc.id, ...doc.data() });
+    });
+    setComentarios(data);
   };
   return (
     <View
@@ -67,6 +110,7 @@ export const CardHome = ({ nombre, apellido, descripcion, uri }) => {
           style={{ flex: 1, marginHorizontal: 10 }}
         />
       </View>
+
       <View style={{ alignItems: "center" }}>
         <TouchableOpacity
           onPress={() => {
@@ -80,98 +124,21 @@ export const CardHome = ({ nombre, apellido, descripcion, uri }) => {
           }}
         >
           <Icon name="chatbox-outline" size={25} />
+          <View style={{ width: 5, backgroundColor: "red" }} />
+          <Text>{comentarios.length}</Text>
+          <View style={{ width: 10, backgroundColor: "red" }} />
           <Text style={{ paddingLeft: 5 }}>Comentarios</Text>
         </TouchableOpacity>
 
         {/* Aqui esta el modal con los comentarios */}
-        <Modal animationType="fade" visible={isVisible} transparent={true}>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: "rgba(0,0,0,0.3)",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <View
-              style={{
-                width: 350,
-                height: 600,
-                backgroundColor: "white",
-                shadowOffset: {
-                  width: 0,
-                  height: 10,
-                },
-                shadowOpacity: 0.25,
-                elevation: 10,
-                borderRadius: 5,
-              }}
-            >
-              {/* Titulo */}
-              <View
-                style={{
-                  height: 100,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={{ fontSize: 32, fontWeight: "bold" }}>
-                  Comentarios
-                </Text>
-              </View>
-              {/* Cuerpo */}
-              <View
-                style={{
-                  height: 320,
-                  /* backgroundColor: "red", */
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={{ fontSize: 20, fontWeight: "300" }}>
-                  Aqui van a ir los comentarios
-                </Text>
-              </View>
-
-              {/* Agregar un comentario */}
-              <View
-                style={{
-                  marginHorizontal: 15,
-                }}
-              >
-                <TextInput
-                  onChangeText={(value) => setDescripcion(value)}
-                  style={styles.textInputStyle}
-                  multiline
-                  numberOfLines={4}
-                  placeholder="Comentame..."
-                  autoCapitalize="none"
-                  keyboardType="email-address"
-                />
-                <TouchableOpacity
-                  onPress={() => setIsVisible(false)}
-                  activeOpacity={0.8}
-                  style={{
-                    height: 50,
-                    borderRadius: 20,
-                    backgroundColor: "#38b000",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: "white",
-                      textAlign: "center",
-                      fontSize: 22,
-                    }}
-                  >
-                    Cerrar
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
+        <ModalComments
+          isVisible={isVisible}
+          setIsVisible={setIsVisible}
+          idUsuario={idUsuario}
+          idPublicacion={idPublicacion}
+          actualUser={actualUser}
+          comentarios={comentarios}
+        />
       </View>
     </View>
   );

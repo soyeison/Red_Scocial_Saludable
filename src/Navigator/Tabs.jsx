@@ -2,7 +2,6 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { HomeScreen } from "../screens/HomeScreen";
 import { ProfileScreen } from "../screens/ProfileScreen";
-import { SearchScreen } from "../screens/SearchScreen";
 import Icon from "@expo/vector-icons/Ionicons";
 import { AddPostScreen } from "../screens/AddPostScreen";
 
@@ -43,22 +42,11 @@ export function Tabs({ route }) {
         component={AddPostScreen}
         initialParams={{ uid: route.params.uid }}
         options={{
-          tabBarLabel: "Inicio",
+          tabBarLabel: "Agregar",
           tabBarIcon: ({ color }) => (
             <Icon name="add-outline" size={25} color={color} />
           ),
           unmountOnBlur: true,
-        }}
-      />
-      <Tab.Screen
-        name="SearchScreen"
-        component={SearchScreen}
-        initialParams={{ uid: route.params.uid }}
-        options={{
-          tabBarLabel: "Buscar",
-          tabBarIcon: ({ color }) => (
-            <Icon name="search-outline" size={25} color={color} />
-          ),
         }}
       />
       <Tab.Screen

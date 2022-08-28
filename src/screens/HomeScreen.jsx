@@ -75,6 +75,9 @@ export const HomeScreen = ({ route }) => {
                   apellido={item.apellido}
                   descripcion={item.text}
                   uri={item.uri}
+                  idUsuario={item.usuario}
+                  idPublicacion={item.idP}
+                  actualUser={route.params.uid}
                 />
               )}
               keyExtractor={(item, index) =>

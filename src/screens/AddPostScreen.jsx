@@ -62,7 +62,7 @@ export const AddPostScreen = ({ route }) => {
       nombre: infoUserState.nombre,
       text: descripcion,
       uri: image,
-      usuario: route.params,
+      usuario: route.params.uid,
     });
     // console.log(docRef.id) Este es el id de la publicacion que acabo de hacer
     navigation.navigate("HomeScreen");
@@ -102,12 +102,9 @@ export const AddPostScreen = ({ route }) => {
 
     const result = await ImagePicker.launchCameraAsync();
 
-    //Viendo los resultados
-    console.log(result);
-
     if (!result.cancelled) {
       setImage(result.uri);
-      console.log(result.uri);
+      /* console.log(result.uri); */
     }
   };
 
