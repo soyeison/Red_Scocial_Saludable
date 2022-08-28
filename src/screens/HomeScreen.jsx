@@ -4,23 +4,60 @@ import {
   FlatList,
   StyleSheet,
   ActivityIndicator,
+  Alert,
+  BackHandler,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+//Firebase
 import { initializeApp } from "@firebase/app";
 import { firebaseConfig } from "../firebase/firebase-config";
 import { getFirestore, getDocs, collection } from "@firebase/firestore";
+import { getAuth, signOut } from "firebase/auth";
 import { CardHome } from "../components/CardHome";
+import { useNavigation } from "@react-navigation/native";
 
 export const HomeScreen = ({ route }) => {
   /* console.log(route.params.uid); */ //Este es el id del usuario que se logeo
   const [state, setState] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
   const firestore = getFirestore(app);
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     getInfo();
+  }, []);
+
+  useEffect(() => {
+    const backAction = () => {
+      //Lo que quiero que haga la funcion es que cierre la sesión
+      Alert.alert("Eyy", "Esta seguro que desea cerrar sesión?", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel",
+        },
+        {
+          text: "YES",
+          onPress: async () => {
+            await auth.signOut();
+            navigation.navigate("LoginScreen");
+          },
+        },
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      //Esta funcion va a manejar el evento del boton de atras en android
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
   }, []);
 
   const getInfo = async () => {

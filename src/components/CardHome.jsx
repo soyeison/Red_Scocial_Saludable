@@ -45,7 +45,7 @@ export const CardHome = ({
 
   useEffect(() => {
     getComments();
-  }, []);
+  }, [isVisible]);
 
   const getComments = async () => {
     //Esta funcion me va a traer los comentarios de esta publicacion

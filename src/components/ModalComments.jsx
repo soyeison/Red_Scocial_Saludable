@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Icon from "@expo/vector-icons/Ionicons";
@@ -32,16 +34,12 @@ export const ModalComments = ({
   comentarios,
 }) => {
   const [infoActualUser, setInfoActualUser] = useState({});
-
+  const [isLoading, setIsLoading] = useState(false);
   const [newComment, setNewComment] = useState("");
   /* console.log(idUsuario, idPublicacion); */ //Tengo el id de la publicaciones y el id del usuario que hio esta publicacion
   //Firebase
   const app = initializeApp(firebaseConfig);
   const firestore = getFirestore(app);
-
-  //   useEffect(() => {
-  //     getComments();
-  //   }, []);
 
   useEffect(() => {
     getActualUserInfo();
@@ -53,22 +51,8 @@ export const ModalComments = ({
     setInfoActualUser(docSnap.data());
   };
 
-  //   const getComments = async () => {
-  //     //Esta funcion me va a traer los comentarios de esta publicacion
-  //     const q = query(
-  //       collection(firestore, "comentarios"),
-  //       where("idPublicacion", "==", idPublicacion) //Con esta consulta estoy buscando en la coleccion comentarios los idPublicacion que coincidan con el id de esta publicacion
-  //     );
-  //     //Además esta misma consulta se esta haciendo para cada elemento del flatlist
-  //     let data = [];
-  //     const querySnapshot = await getDocs(q);
-  //     querySnapshot.forEach((doc) => {
-  //       data.push({ idP: doc.id, ...doc.data() });
-  //     });
-  //     setComentarios(data);
-  //   };
-
   const sendComment = async () => {
+    setIsLoading(true);
     if (newComment === "") {
       Alert.alert("Debe agregar una descripción");
       return;
@@ -81,6 +65,16 @@ export const ModalComments = ({
       nombre: infoActualUser.nombre,
       apellido: infoActualUser.apellido,
     });
+
+    Alert.alert(
+      "Excelente",
+      "Comentario agregado con éxito",
+      [{ text: "Ok", onPress: () => setIsVisible(false) }],
+      {
+        cancelable: true,
+      }
+    );
+    setIsLoading(false);
   };
 
   return (
@@ -177,26 +171,39 @@ export const ModalComments = ({
               autoCapitalize="none"
               keyboardType="email-address"
             />
-            <TouchableOpacity
-              onPress={sendComment}
-              activeOpacity={0.8}
-              style={{
-                height: 50,
-                borderRadius: 20,
-                backgroundColor: "#38b000",
-                justifyContent: "center",
-              }}
-            >
-              <Text
+            {isLoading ? (
+              <View
                 style={{
-                  color: "white",
-                  textAlign: "center",
-                  fontSize: 22,
+                  height: 50,
+                  borderRadius: 20,
+                  backgroundColor: "#38b000",
+                  justifyContent: "center",
                 }}
               >
-                Agregar
-              </Text>
-            </TouchableOpacity>
+                <ActivityIndicator size={20} color="white" />
+              </View>
+            ) : (
+              <TouchableOpacity
+                onPress={sendComment}
+                activeOpacity={0.8}
+                style={{
+                  height: 50,
+                  borderRadius: 20,
+                  backgroundColor: "#38b000",
+                  justifyContent: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    textAlign: "center",
+                    fontSize: 22,
+                  }}
+                >
+                  Agregar
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </View>
