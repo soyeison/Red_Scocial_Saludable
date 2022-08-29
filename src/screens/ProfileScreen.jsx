@@ -29,7 +29,7 @@ export const ProfileScreen = ({ route }) => {
   }, []);
 
   useEffect(() => {
-    getComments();
+    getPublicaciones();
   }, []);
 
   const getActualUserInfo = async () => {
@@ -38,11 +38,11 @@ export const ProfileScreen = ({ route }) => {
     setInfoUser(docSnap.data());
   };
 
-  const getComments = async () => {
-    //Esta funcion me va a traer los comentarios de esta publicacion
+  const getPublicaciones = async () => {
+    //Esta funcion me va a traer las publicaciones de este usuario
     const q = query(
       collection(firestore, "publicaciones"),
-      where("usuario", "==", route.params.uid) //Con esta consulta estoy buscando en la coleccion comentarios los idPublicacion que coincidan con el id de esta publicacion
+      where("usuario", "==", route.params.uid)
     );
     //Además esta misma consulta se esta haciendo para cada elemento del flatlist
     let data = [];
