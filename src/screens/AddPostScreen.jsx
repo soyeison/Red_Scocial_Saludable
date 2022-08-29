@@ -8,6 +8,7 @@ import {
   Dimensions,
   Image,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { initializeApp } from "@firebase/app";
@@ -31,6 +32,7 @@ export const AddPostScreen = ({ route }) => {
   const navigation = useNavigation();
   const [image, setImage] = useState(""); //Aquí se va a guardar la imagen que se cargue
   const [descripcion, setDescripcion] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   //Firebase config
   const app = initializeApp(firebaseConfig);
   const firestore = getFirestore(app);
@@ -52,6 +54,7 @@ export const AddPostScreen = ({ route }) => {
 
   const sendPost = async () => {
     //Función que me permite agregar una publicación
+    setIsLoading(true);
     if (descripcion === "") {
       Alert.alert("Debe agregar una descripción");
       return;
@@ -61,11 +64,22 @@ export const AddPostScreen = ({ route }) => {
       apellido: infoUserState.apellido,
       nombre: infoUserState.nombre,
       text: descripcion,
-      uri: image,
+      uri:
+        image === ""
+          ? "https://www.lavanguardia.com/files/og_thumbnail/uploads/2016/05/03/5fa2d3b98791a.jpeg"
+          : image,
       usuario: route.params.uid,
     });
     // console.log(docRef.id) Este es el id de la publicacion que acabo de hacer
-    navigation.navigate("HomeScreen");
+    Alert.alert(
+      "Excelente",
+      "Publicación agregada con éxito",
+      [{ text: "Ok", onPress: () => navigation.navigate("HomeScreen") }],
+      {
+        cancelable: true,
+      }
+    );
+    setIsLoading(false);
   };
 
   const pickImage = async () => {
@@ -129,7 +143,7 @@ export const AddPostScreen = ({ route }) => {
           multiline
           numberOfLines={8}
           placeholder="Cuentame..."
-          autoCapitalize="none"
+          autoCapitalize="sentences"
           keyboardType="email-address"
         />
 
@@ -152,21 +166,35 @@ export const AddPostScreen = ({ route }) => {
         </View>
 
         {/* Botones */}
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={styles.buttons}
-          onPress={sendPost}
-        >
-          <Text
+        {isLoading ? (
+          <View
             style={{
-              color: "white",
-              textAlign: "center",
-              fontSize: 18,
+              height: 50,
+              borderRadius: 20,
+              backgroundColor: "#38b000",
+              justifyContent: "center",
+              marginVertical: 8,
             }}
           >
-            Agregar publicación
-          </Text>
-        </TouchableOpacity>
+            <ActivityIndicator size={20} color="white" />
+          </View>
+        ) : (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.buttons}
+            onPress={sendPost}
+          >
+            <Text
+              style={{
+                color: "white",
+                textAlign: "center",
+                fontSize: 18,
+              }}
+            >
+              Agregar publicación
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </ScrollView>
   );

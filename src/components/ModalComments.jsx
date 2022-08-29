@@ -168,7 +168,7 @@ export const ModalComments = ({
               multiline
               numberOfLines={4}
               placeholder="Comentame..."
-              autoCapitalize="none"
+              autoCapitalize="sentences"
               keyboardType="email-address"
             />
             {isLoading ? (

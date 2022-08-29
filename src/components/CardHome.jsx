@@ -20,6 +20,8 @@ import {
   collection,
   where,
   getDocs,
+  getDoc,
+  doc,
 } from "@firebase/firestore";
 
 const windowWidth = Dimensions.get("window").width;
@@ -33,6 +35,7 @@ export const CardHome = ({
   idPublicacion,
   actualUser,
 }) => {
+  const [infoUser, setInfoUser] = useState({});
   const [isVisible, setIsVisible] = useState(false);
   const [comentarios, setComentarios] = useState([]);
   //Firebase
@@ -40,8 +43,18 @@ export const CardHome = ({
   const firestore = getFirestore(app);
 
   useEffect(() => {
+    getActualUserInfo();
+  }, []);
+
+  useEffect(() => {
     getComments();
   }, [isVisible]);
+
+  const getActualUserInfo = async () => {
+    const docuRef = doc(firestore, `usuarios/${idUsuario}`);
+    const docSnap = await getDoc(docuRef);
+    setInfoUser(docSnap.data());
+  };
 
   const getComments = async () => {
     //Esta funcion me va a traer los comentarios de esta publicacion
@@ -57,6 +70,8 @@ export const CardHome = ({
     });
     setComentarios(data);
   };
+
+  console.log(infoUser);
   return (
     <View
       style={{
@@ -76,7 +91,7 @@ export const CardHome = ({
       >
         <Image
           source={{
-            uri: "https://socialtools.me/wp-content/uploads/2016/04/foto-de-perfil.jpg",
+            uri: infoUser.uriProfile,
           }}
           style={{ height: 50, width: 50, borderRadius: 20 }}
         />

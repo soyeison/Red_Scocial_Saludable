@@ -118,7 +118,7 @@ export const ProfileScreen = ({ route }) => {
           >
             <Image
               source={{
-                uri: "https://socialtools.me/wp-content/uploads/2016/04/foto-de-perfil.jpg",
+                uri: infoUser.uriProfile,
               }}
               style={{ height: 150, width: 150, borderRadius: 80 }}
             />
@@ -136,7 +136,3 @@ export const ProfileScreen = ({ route }) => {
     />
   );
 };
-
-{
-  /*  */
-}

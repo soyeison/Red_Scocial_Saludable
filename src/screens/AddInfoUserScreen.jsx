@@ -7,8 +7,11 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  Image,
 } from "react-native";
 import React, { useState } from "react";
+import * as ImagePicker from "expo-image-picker";
+import Icon from "@expo/vector-icons/Ionicons";
 //Firebase
 import { initializeApp } from "@firebase/app";
 import { firebaseConfig } from "../firebase/firebase-config";
@@ -21,6 +24,9 @@ export const AddInfoUserScreen = ({ route }) => {
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const navigation = useNavigation();
+  const [image, setImage] = useState(
+    "https://p16-va-default.akamaized.net/img/musically-maliva-obj/1665282759496710~c5_720x720.jpeg"
+  );
 
   //Firebase config
   const app = initializeApp(firebaseConfig);
@@ -39,8 +45,48 @@ export const AddInfoUserScreen = ({ route }) => {
       return;
     } else {
       const docuRef = doc(firestore, `usuarios/${route.params.uid}`);
-      setDoc(docuRef, { nombre, apellido }, { merge: true });
+      setDoc(docuRef, { nombre, apellido, uriProfile: image }, { merge: true });
       navigation.navigate("Tabs", { uid: route.params.uid });
+    }
+  };
+
+  const pickImage = async () => {
+    //Esta función me permite seleccionar una foto desde mi galeria
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync(); //Esto pide los permisos al usuarios para acceder a la galeria
+    if (permissionResult.granted === false) {
+      Alert.alert("No me dejaste acceder a las fotos");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    /* console.log(result); */
+
+    if (!result.cancelled) {
+      setImage(result.uri); //Aqui esta la uri de la foto
+      /* console.log(result.uri); */
+    }
+  };
+
+  //Funciones para usar la camara
+  const openCamera = async () => {
+    const permisisonResult = await ImagePicker.requestCameraPermissionsAsync(); //Esto pide permisos al usuario para acceder a la camara
+
+    if (permisisonResult.granted === false) {
+      Alert.alert("No tengo permisos para acceder a la cámara");
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync();
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+      /* console.log(result.uri); */
     }
   };
   return (
@@ -73,6 +119,25 @@ export const AddInfoUserScreen = ({ route }) => {
           keyboardType="default"
         />
         <View style={{ height: 30 }} />
+
+        {/* Zona para agregar */}
+        <View style={{ alignItems: "center" }}>
+          {image && (
+            <Image
+              source={{ uri: image }}
+              style={{ width: 200, height: 200, borderRadius: 100 }}
+            />
+          )}
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity onPress={pickImage}>
+              <Icon name="image-outline" size={35} color="grey" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={openCamera}>
+              <Icon name="camera-outline" size={35} color="grey" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
         {/* Botones */}
         <TouchableOpacity
           activeOpacity={0.8}
@@ -97,14 +162,14 @@ export const AddInfoUserScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     width: width - 60,
-    height: height - 110,
+    height: height - 80,
     alignSelf: "center",
-    marginTop: 110,
+    marginTop: 50,
   },
   header: {
     fontSize: 32,
     fontWeight: "bold",
-    marginTop: 40,
+    marginTop: 10,
   },
   subTitle: {
     fontSize: 18,
