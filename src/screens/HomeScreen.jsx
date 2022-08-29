@@ -105,7 +105,7 @@ export const HomeScreen = ({ route }) => {
             </View>
           ) : (
             <FlatList
-              data={state.reverse()}
+              data={state}
               renderItem={({ item }) => (
                 <CardHome
                   nombre={item.nombre}

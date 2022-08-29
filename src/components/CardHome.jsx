@@ -71,12 +71,10 @@ export const CardHome = ({
     setComentarios(data);
   };
 
-  console.log(infoUser);
   return (
     <View
       style={{
         ...styles.cardContainer,
-        borderWidth: 1,
         width: windowWidth * 0.85,
         borderRadius: 10,
       }}
@@ -158,6 +156,7 @@ export const CardHome = ({
 const styles = StyleSheet.create({
   cardContainer: {
     marginHorizontal: 10,
+    backgroundColor: "rgba(0,0,0,0.05)",
   },
   buttons: {
     width: 120,
