@@ -20,9 +20,6 @@ import {
   collection,
   where,
   getDocs,
-  addDoc,
-  getDoc,
-  doc,
 } from "@firebase/firestore";
 
 const windowWidth = Dimensions.get("window").width;
@@ -37,7 +34,6 @@ export const CardHome = ({
   actualUser,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [nroComments, setNroComments] = useState(0);
   const [comentarios, setComentarios] = useState([]);
   //Firebase
   const app = initializeApp(firebaseConfig);

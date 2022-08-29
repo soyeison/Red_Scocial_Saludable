@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { initializeApp } from "@firebase/app";
 import { firebaseConfig } from "../firebase/firebase-config";
 import { getFirestore, getDocs, collection } from "@firebase/firestore";
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import { CardHome } from "../components/CardHome";
 import { useNavigation } from "@react-navigation/native";
 

@@ -58,6 +58,7 @@ export function Tabs({ route }) {
           tabBarIcon: ({ color }) => (
             <Icon name="person-outline" size={25} color={color} />
           ),
+          unmountOnBlur: true,
         }}
       />
     </Tab.Navigator>

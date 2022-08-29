@@ -76,7 +76,7 @@ export const LoginScreen = () => {
         >
           Bienvenido de vuelta
         </Text>
-        <Text style={{ marginTop: 10 }}>
+        <Text style={{ marginTop: 10, textAlign: "center" }}>
           Bienvenido! Por favor ingrese sus credenciales.
         </Text>
 
